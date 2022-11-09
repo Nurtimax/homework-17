@@ -27,8 +27,7 @@ const expenses = [
 
 function App() {
   const [newExpenses, setNewExpenses] = useState(expenses);
-  const [inpuut, setInpuut] = useState("");
-  const [filterYears, setFilterYears] = useState('')
+  // const [filterYears, setFilterYears] = useState("2020");
 
   const addExpenseHandler = (expense) => {
     setNewExpenses((prevExpense) => {
@@ -36,33 +35,23 @@ function App() {
     });
   };
 
-  
-  const chooseItem = (expense, years) => {
-    return expense.filter((item, index) => {
-      return String(item.date.getFullYear()) === String(filterYears);
-    });
-  };
-  const yearsAgo = (years) => {
-    setFilterYears(years)
-  }
-  console.log(filterYears);
+  // const chooseItem = (expense) => {
+  //   return expense.filter((item) =>
+  //     String(filterYears) === "All"
+  //       ? true
+  //       : String(item.date.getFullYear()) === String(filterYears)
+  //       ? true
+  //       : null
+  //   );
+  // };
+  // const yearsAgo = (years) => {
+  //   setFilterYears(years);
+  // };
 
-  const inputChange = (event) => {
-    setInpuut(event.target.value);
-  };
   return (
     <div className="App">
-      <input
-        type="text"
-        value={inpuut}
-        className="searchInput"
-        onChange={inputChange}
-      />
       <NewExpense onAddExpense={addExpenseHandler} />
-      <Expenses
-        expenses={() => chooseItem(newExpenses, inpuut)}
-        yearsAgo={yearsAgo}
-      />
+      <Expenses expenses={newExpenses}/>
     </div>
   );
 }

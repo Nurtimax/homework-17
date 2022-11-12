@@ -1,16 +1,17 @@
+import axios from "axios";
 import React, { useState } from "react";
 import "./ExpenseForm.css";
 
 const defaultValues = {
   enteredTitle: "",
-    enteredDate: "",
-    enteredAmount: "",
-}
+  enteredDate: "",
+  enteredAmount: "",
+};
 
 const ExpenseForm = (props) => {
   const [userInput, setUserInput] = useState(defaultValues);
 
-  const submitHandler = (event) => {
+  const submitHandler = async (event) => {
     event.preventDefault();
 
     const expenseData = {
@@ -19,18 +20,33 @@ const ExpenseForm = (props) => {
       date: new Date(userInput.enteredDate),
     };
 
+    await postData(expenseData);
+
     props.onSaveExpenseData(expenseData);
 
     setUserInput(defaultValues);
   };
+
+  const postData = async (data) => {
+    try {
+      const response = await axios.post(
+        "https://tracker-lesson-default-rtdb.firebaseio.com/expense.json",
+        data
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const changeValuesHadler = (key) => {
     return (event) => {
       setUserInput((prevState) => {
         return {
           ...prevState,
-          [key]: event.target.value
-        }
-      })
+          [key]: event.target.value,
+        };
+      });
     };
   };
 

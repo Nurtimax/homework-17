@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import "./App.css";
 import Expenses from "./components/Expenses/Expenses";
@@ -25,33 +26,48 @@ const expenses = [
   },
 ];
 
+let newArr = [];
 function App() {
   const [newExpenses, setNewExpenses] = useState(expenses);
   // const [filterYears, setFilterYears] = useState("2020");
 
-  const addExpenseHandler = (expense) => {
-    setNewExpenses((prevExpense) => {
-      return [expense, ...prevExpense];
-    });
+  const addExpenseHandler = async (expense) => {
+    // setNewExpenses((prevExpense) => {
+    //   return [expense, ...prevExpense];
+    // });
+    getData()
   };
 
-  // const chooseItem = (expense) => {
-  //   return expense.filter((item) =>
-  //     String(filterYears) === "All"
-  //       ? true
-  //       : String(item.date.getFullYear()) === String(filterYears)
-  //       ? true
-  //       : null
-  //   );
-  // };
-  // const yearsAgo = (years) => {
-  //   setFilterYears(years);
-  // };
+ 
+  const getData = async () => {
+    try {
+      const response = await axios.get(
+        "https://tracker-lesson-default-rtdb.firebaseio.com/expense.json"
+      );
+      const result = response.data;
+      for (const key in result) {
+        newArr.unshift(result[key]);
+      }
+      const showArr = newArr.map((item, index, array) => ({
+        id: index + array.length,
+        amount: item.amount,
+        date: new Date(item.date),
+        title: item.title,
+      }));
+      console.log(showArr);
+      setNewExpenses([...showArr, ...expenses]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
     <div className="App">
       <NewExpense onAddExpense={addExpenseHandler} />
-      <Expenses expenses={newExpenses}/>
+      <Expenses expenses={newExpenses} />
     </div>
   );
 }
